@@ -1,0 +1,29 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: spring-cloud-config-client # 微服务Config Client客户端名字
+  cloud:
+    config:
+      name: test-config #这是我们要读取的配置文件名 对应获取规则的{application}
+      profile: dev   #这个是要获取的环境 对应的便是{profile}
+      label: master #这个就是获取的节点 对应的是{label}
+      #uri: http://localhost:8080/ #这就是我们config server的一个地址
+      discovery:
+        enabled: true #开启Config服务发现支持
+        service-id: spring-cloud-config-server #指定Config-Server端的name,也就是server端spring.application.name的值
+
+#指向注册中心的地址
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:3000/eureka/
+
+# 公开Actuator 中的所有端点(API)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

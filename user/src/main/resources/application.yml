@@ -1,0 +1,49 @@
+server:
+  port: 5000
+eureka:
+  client:
+    registerWithEureka: false
+    serviceUrl:
+      defaultZone: http://eureka3000.com:3000/eureka/,http://eureka3001.com:3001/eureka/,http://eureka3002.com:3002/eureka/  #eureka服务端提供的注册地址 参考服务端配置的这个路径
+  instance:
+    instance-id: user-1 #此实例注册到eureka服务端的唯一的实例ID
+    prefer-ip-address: true #是否显示IP地址
+    leaseRenewalIntervalInSeconds: 10 #eureka客户需要多长时间发送心跳给eureka服务器，表明它仍然活着,默认为30 秒 (与下面配置的单位都是秒)
+    leaseExpirationDurationInSeconds: 30 #Eureka服务器在接收到实例的最后一次发出的心跳后，需要等待多久才可以将此实例删除，默认为90秒
+
+spring:
+  application:
+    name: client-user #此实例注册到eureka服务端的name
+  zipkin:
+    base-url: http://localhost:9411 #指定Zipkin server地址
+  sleuth:
+    sampler:
+      probability: 1.0 #采样比例，设置为1.0 时代表百分之百采样，默认是0.1 也即是10%  顾名思义 采取10%的请求数据  因为在分布式系统中，数据量可能会非常大，因此采样非常重要。我们示例数据少最好配置为1全采样
+
+
+# 打开 Feign 对 Hystrix 的支持
+feign:
+  hystrix:
+    enabled: true
+
+# 配置hystrix的参数
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20*1000 #命令执行超时时间，默认1000ms。此处设置超时20s
+      circuitBreaker:
+        requestVolumeThreshold: 5 #该属性设置滚动窗口中将使断路器跳闸的最小请求数量,如果此属性值为20，则在窗口时间内（如10s内），如果只收到19个请求且都失败了，则断路器也不会开启。默认值：20
+#        sleepWindowInMilliseconds : 5000   #断路器跳闸后，在此值的时间内，hystrix会拒绝新的请求，只有过了这个时间断路器才会打开闸门。默认值：5000
+#  threadpool:
+#    default: # 默认参数，作用的所有的hystrix的客户端
+#      coreSize: 10#并发执行的最大线程数，默认值为 10。
+
+# 公开Actuator 中的所有端点(API)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

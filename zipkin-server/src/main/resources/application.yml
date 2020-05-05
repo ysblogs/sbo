@@ -1,0 +1,20 @@
+server:
+   port: 9411 #默认端口
+spring:
+  application:
+    name: zipkin-server
+management:
+  metrics:
+    web:
+      server:
+        request:
+          autotime:
+            enabled: false
+# Elasticsearch 持久化
+zipkin:
+  storage:
+    type: elasticsearch
+    elasticsearch:
+      cluster: elasticsearch
+      hosts: http://localhost:9200 #使用Elasticsearch的连接地址
+      index: zipkin
